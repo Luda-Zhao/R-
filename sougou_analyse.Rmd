@@ -1,0 +1,78 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+group=read.csv("推广组_全部设备_全部报告_查询日期(2021年09月01日_2021年12月19日).csv")
+```
+```{r}
+df_sort<-group[2:nrow(group),]
+```
+
+```{r}
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+par(family="STKaiti")
+barplot(df_sort$点击数,family="STKaiti",horiz=TRUE,xlim=c(-1000,2000),col = col)
+title(main=list("推广组个单元消费比例",cex=2),sub="时间:2021.09.01-2021.12.19", ylab="推广组",xlab="数量")
+text(y=seq(from=1,length.out=4,by=1.05),x=-250,label=df_sort$推广组,family="STKaiti",cex=1)
+#legend("topright",legend=levels(baidu_time_keywords$日期),cex = 0.5,col=rev(col),ncol=2,pch = 15)
+text(labels= paste(round(10000*df_sort$点击数/sum(df_sort$点击数))/100,"%",sep=""),cex=1,
+      y=seq(from=1,length.out=4,by=1.05),
+      x=df_sort$点击数+150)
+```
+
+```{r}
+group_search<-read.csv("关键词_全部设备_全部报告_查询日期(2021年09月01日_2021年12月19日).csv")
+```
+
+```{r}
+df_sort<-group_search[2:nrow(group_search),]
+```
+```{r}
+df_sort<-df_sort[order(df_sort$点击数,decreasing = TRUE),]
+```
+
+```{r}
+df_sort<-df_sort[1:30,]
+```
+```{r}
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+par(family="STKaiti")
+barplot(df_sort$点击数,family="STKaiti",horiz=TRUE,xlim=c(-500,1000),col = col)
+title(main=list("前30个关键词点击比例",cex=2),sub="时间:2021.09.01-2021.12.19", ylab="关键词",xlab="数量")
+text(y=seq(from=1,length.out=30,by=1.19),x=-200,label=df_sort$关键词,family="STKaiti",cex=0.7)
+#legend("topright",legend=levels(baidu_time_keywords$日期),cex = 0.5,col=rev(col),ncol=2,pch = 15)
+text(labels= paste(round(10000*df_sort$点击数/sum(group_search[2:nrow(group_search),]$点击数))/100,"%",sep=""),cex=0.7,
+      y=seq(from=1,length.out=30,by=1.19),
+      x=df_sort$点击数+50)
+```
+```{r}
+key_words<-read.csv("统计报告.csv")
+```
+
+```{r}
+df_sort<-key_words[2:nrow(key_words),]
+```
+```{r}
+df_sort<-df_sort[order(df_sort$点击数,decreasing = TRUE),]
+```
+
+```{r}
+df_sort<-df_sort[1:30,]
+```
+```{r}
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+par(family="STKaiti")
+barplot(df_sort$点击数,family="STKaiti",horiz=TRUE,xlim=c(-500,600),col = col)
+title(main=list("前30个搜索词点击比例",cex=2),sub="时间:2021.09.01-2021.12.19", ylab="搜索词",xlab="数量")
+text(y=seq(from=1,length.out=30,by=1.19),x=-200,label=df_sort$搜索词,family="STKaiti",cex=0.7)
+#legend("topright",legend=levels(baidu_time_keywords$日期),cex = 0.5,col=rev(col),ncol=2,pch = 15)
+text(labels= paste(round(10000*df_sort$点击数/sum(key_words[2:nrow(key_words),]$点击数))/100,"%",sep=""),cex=0.7,
+      y=seq(from=1,length.out=30,by=1.19),
+      x=df_sort$点击数+50)
+```
+

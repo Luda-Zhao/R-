@@ -1,0 +1,364 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+baidu=read.csv("new_word_report_20211122-20211205_32726191_832894.csv")
+```
+
+```{r}
+str(baidu)
+```
+
+```{r}
+baidu_keywords=baidu[,c(3,5,7,9,10,11,12,13,14,15,16,17,18,19,20,21)]
+```
+
+```{r}
+str(baidu_keywords)
+```
+
+```{r}
+baidu_keywords$推广计划=as.factor(baidu_keywords$推广计划)
+baidu_keywords$关键词=as.factor(baidu_keywords$关键词)
+baidu_keywords$点击率=baidu_keywords$点击/baidu_keywords$展现
+baidu_keywords$预估点击率=as.factor(baidu_keywords$预估点击率)
+baidu_keywords$创意相关性=as.factor(baidu_keywords$创意相关性)
+baidu_keywords$落地页体验=as.factor(baidu_keywords$落地页体验)
+baidu_keywords$匹配模式=as.factor(baidu_keywords$匹配模式)
+baidu_keywords$推广单元=as.factor(baidu_keywords$推广单元)
+```
+
+```{r}
+str(baidu_keywords)
+```
+
+```{r}
+sum1=0
+sum2=0
+for(i in 1:nrow(baidu_keywords))
+{
+  if(baidu_keywords$推广单元[i]=="简历解析")
+  {
+    sum1=baidu_keywords$展现[i]+sum1
+  }
+  else
+  {
+    sum2=baidu_keywords$展现[i]+sum2
+  }
+}
+```
+
+```{r}
+# 数据准备
+info = c(sum1,sum2)
+
+# 命名
+names = c("简历解析","人岗匹配")
+
+# 涂色（可选）
+cols = c("#ED1C24","#22B14C","#FFC90E","#3f48CC")
+# 计算百分比
+piepercent = paste(round(100*info/sum(info)), "%")
+# 绘图
+par(family="STKaiti")
+pie(info, labels=piepercent, main = "不同推广单元的展现数分布", col=cols, family='STKaiti')
+# 添加颜色样本标注
+legend("topright", names, cex=0.8, fill=cols)
+```
+```{r}
+ans=rep(0,length(levels(baidu_keywords$关键词)))
+
+for(i in 1:nrow(baidu_keywords))
+{
+  for(j in 1:length(levels(baidu_keywords$关键词)))
+  {
+    if(baidu_keywords$关键词[i]==levels(baidu_keywords$关键词)[j])
+    {
+      ans[j]=ans[j]+baidu_keywords$展现[i]
+    }
+  }
+}
+```
+```{r}
+df<-data.frame(ans,levels(baidu_keywords$关键词))
+df_sort<-df[order(df$ans,decreasing = TRUE),]
+```
+```{r}
+df
+df_sort
+```
+
+```{r}
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+par(family="STKaiti")
+barplot(df_sort$ans,family="STKaiti",horiz=TRUE,xlim=c(-5000,20000),col = col)
+title(main=list("推广单元各模块展示比例",cex=2),sub="时间:2021.11.22-2021.12.05", ylab="推广单元",xlab="数量")
+text(y=seq(from=1,length.out=39,by=1.19),x=-2000,label=df_sort$levels.baidu_keywords.关键词.,family="STKaiti",cex=0.5)
+legend("topright",legend=levels(baidu_keywords$关键词),cex = 0.5,col=rev(col),ncol=2,pch = 15)
+text(labels= paste(round(10000*df_sort$ans/sum(df_sort$ans))/100,"%",sep=""),cex=0.7,
+      y=seq(from=1,length.out=39,by=1.19),
+      x=df_sort$ans+1000)
+
+```
+```{r}
+ans=rep(0,length(levels(baidu_keywords$关键词)))
+
+for(i in 1:nrow(baidu_keywords))
+{
+  for(j in 1:length(levels(baidu_keywords$关键词)))
+  {
+    if(baidu_keywords$关键词[i]==levels(baidu_keywords$关键词)[j])
+    {
+      ans[j]=ans[j]+baidu_keywords$点击[i]
+    }
+  }
+}
+df<-data.frame(ans,levels(baidu_keywords$关键词))
+df_sort<-df[order(df$ans,decreasing = TRUE),]
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+par(family="STKaiti")
+barplot(df_sort$ans,family="STKaiti",horiz=TRUE,xlim=c(-50,100),col = col)
+title(main=list("推广单元各模块点击比例",cex=2),sub="时间:2021.11.22-2021.12.05", ylab="推广单元",xlab="数量")
+text(y=seq(from=1,length.out=39,by=1.19),x=-15,label=df_sort$levels.baidu_keywords.关键词.,family="STKaiti",cex=0.5)
+legend("topright",legend=levels(baidu_keywords$关键词),cex = 0.5,col=rev(col),ncol=2,pch = 15)
+text(labels= paste(round(10000*df_sort$ans/sum(df_sort$ans))/100,"%",sep=""),cex=0.7,
+      y=seq(from=1,length.out=39,by=1.19),
+      x=df_sort$ans+6)
+```
+```{r}
+ans=rep(0,length(levels(baidu_keywords$关键词)))
+
+for(i in 1:nrow(baidu_keywords))
+{
+  for(j in 1:length(levels(baidu_keywords$关键词)))
+  {
+    if(baidu_keywords$关键词[i]==levels(baidu_keywords$关键词)[j])
+    {
+      ans[j]=ans[j]+baidu_keywords$消费[i]
+    }
+  }
+}
+df<-data.frame(ans,levels(baidu_keywords$关键词))
+df_sort<-df[order(df$ans,decreasing = TRUE),]
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+par(family="STKaiti")
+barplot(df_sort$ans,family="STKaiti",horiz=TRUE,xlim=c(-100,350),col = col)
+title(main=list("推广单元各模块消费比例",cex=2),sub="时间:2021.11.22-2021.12.05", ylab="推广单元",xlab="数量")
+text(y=seq(from=1,length.out=39,by=1.19),x=-30,label=df_sort$levels.baidu_keywords.关键词.,family="STKaiti",cex=0.5)
+legend("topright",legend=levels(baidu_keywords$关键词),cex = 0.5,col=rev(col),ncol=2,pch = 15)
+text(labels= paste(round(10000*df_sort$ans/sum(df_sort$ans))/100,"%",sep=""),cex=0.7,
+      y=seq(from=1,length.out=39,by=1.19),
+      x=df_sort$ans+15)
+```
+```{r}
+baidu_time_keywords=baidu[,c(1,9,10,11,12,13)]
+```
+```{r}
+str(baidu_time_keywords)
+```
+```{r}
+baidu_time_keywords$日期<-as.factor(baidu_time_keywords$日期)
+baidu_time_keywords$点击率<-baidu_time_keywords$点击/baidu_time_keywords$展现
+str(baidu_time_keywords)
+```
+```{r}
+ans=rep(0,length(levels(baidu_time_keywords$日期)))
+
+for(i in 1:nrow(baidu_keywords))
+{
+  for(j in 1:length(levels(baidu_time_keywords$日期)))
+  {
+    if(baidu_time_keywords$日期[i]==levels(baidu_time_keywords$日期)[j])
+    {
+      ans[j]=ans[j]+baidu_keywords$展现[i]
+    }
+  }
+}
+```
+```{r}
+df<-data.frame(ans,levels(baidu_time_keywords$日期))
+df_sort<-df
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+par(family="STKaiti")
+barplot(df_sort$ans,family="STKaiti",horiz=TRUE,xlim=c(-2000,5000),col = col)
+title(main=list("推广单元各模块展示比例",cex=2),sub="时间:2021.11.22-2021.12.05", ylab="日期",xlab="数量")
+text(y=seq(from=1,length.out=14,by=1.19),x=-1000,label=df_sort$levels.baidu_time_keywords.日期.,family="STKaiti",cex=1)
+#legend("topright",legend=levels(baidu_time_keywords$日期),cex = 0.5,col=rev(col),ncol=2,pch = 15)
+text(labels= paste(round(10000*df_sort$ans/sum(df_sort$ans))/100,"%",sep=""),cex=0.7,
+      y=seq(from=1,length.out=33,by=1.19),
+      x=df_sort$ans+200)
+```
+```{r}
+df_sort
+df_sort$levels.baidu_time_keywords.日期.<-as.factor(df_sort$levels.baidu_time_keywords.日期.)
+df_sort$levels.baidu_time_keywords.日期.<-as.numeric(df_sort$levels.baidu_time_keywords.日期.)
+```
+
+```{r}
+library(ggplot2)
+par(family='STKaiti')
+ggplot(df_sort,aes(x=levels.baidu_time_keywords.日期.,y=ans))+geom_line(size=0.8,color=15)+geom_point(size=1.5,color="red",shape=4)+geom_text(aes(label = ans, vjust = 1.1, hjust = -0.5, angle = 20), show.legend = FALSE)+xlab("日期:11.08-11.21")+ylab("展现")+ggtitle("推广展现")+theme(axis.title = element_text(family='STKaiti'),title = element_text(family='STKaiti'))
+```
+```{r}
+sum1=0
+sum2=0
+for(i in 1:nrow(df_sort))
+{
+  if (i==6 || i==7 || i==13|| i==14)
+  {
+    sum2=sum2+df_sort$ans[i]
+  }
+  else
+  {
+    sum1=sum1+df_sort$ans[i]
+  }
+}
+```
+
+```{r}
+# 数据准备
+info = c(sum1,sum2)
+
+# 命名
+names = c("工作日合计","休息日合计")
+
+# 涂色（可选）
+cols = c("#ED1C24","#22B14C","#FFC90E","#3f48CC")
+# 计算百分比
+piepercent = paste(round(100*info/sum(info)), "%")
+# 绘图
+par(family="STKaiti")
+pie(info, labels=piepercent, main = "不同推广单元的展现数分布", col=cols, family='STKaiti')
+# 添加颜色样本标注
+legend("topright", names, cex=0.8, fill=cols)
+```
+```{r}
+ans=rep(0,length(levels(baidu_time_keywords$日期)))
+
+for(i in 1:nrow(baidu_time_keywords))
+{
+  for(j in 1:length(levels(baidu_time_keywords$日期)))
+  {
+    if(baidu_time_keywords$日期[i]==levels(baidu_time_keywords$日期)[j])
+    {
+      ans[j]=ans[j]+baidu_time_keywords$点击[i]
+    }
+  }
+}
+```
+
+```{r}
+df<-data.frame(ans,levels(baidu_time_keywords$日期))
+df_sort<-df
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+par(family="STKaiti")
+barplot(df_sort$ans,family="STKaiti",horiz=TRUE,xlim=c(-50,50),col = col)
+title(main=list("推广单元各模块点击比例",cex=2),sub="时间:2021.11.08-2021.11.21", ylab="日期",xlab="数量")
+text(y=seq(from=1,length.out=14,by=1.19),x=-20,label=df_sort$levels.baidu_time_keywords.日期.,family="STKaiti",cex=1)
+#legend("topright",legend=levels(baidu_time_keywords$日期),cex = 0.5,col=rev(col),ncol=2,pch = 15)
+text(labels= paste(round(10000*df_sort$ans/sum(df_sort$ans))/100,"%",sep=""),cex=0.7,
+      y=seq(from=1,length.out=14,by=1.19),
+      x=df_sort$ans+5)
+library(ggplot2)
+df_sort$levels.baidu_time_keywords.日期.<-as.factor(df_sort$levels.baidu_time_keywords.日期.)
+df_sort$levels.baidu_time_keywords.日期.<-as.numeric(df_sort$levels.baidu_time_keywords.日期.)
+par(family='STKaiti')
+ggplot(df_sort,aes(x=levels.baidu_time_keywords.日期.,y=ans))+geom_line(size=0.8,color=15)+geom_point(size=1.5,color="red",shape=4)+geom_text(aes(label = ans, vjust = 1.1, hjust = -0.5, angle = 20), show.legend = FALSE)+xlab("日期")+ylab("点击")+ggtitle("推广点击")+theme(axis.title = element_text(family='STKaiti'),title = element_text(family='STKaiti'))
+sum1=0
+sum2=0
+for(i in 1:nrow(df_sort))
+{
+  if (i==6 || i==7 || i==13|| i==14)
+  {
+    sum2=sum2+df_sort$ans[i]
+  }
+  else
+  {
+    sum1=sum1+df_sort$ans[i]
+  }
+}
+# 数据准备
+info = c(sum1,sum2)
+
+# 命名
+names = c("工作日合计","休息日合计")
+
+# 涂色（可选）
+cols = c("#ED1C24","#22B14C","#FFC90E","#3f48CC")
+# 计算百分比
+piepercent = paste(round(100*info/sum(info)), "%")
+# 绘图
+par(family="STKaiti")
+pie(info, labels=piepercent, main = "不同推广单元的点击数分布", col=cols, family='STKaiti')
+# 添加颜色样本标注
+legend("topright", names, cex=0.8, fill=cols)
+```
+```{r}
+ans=rep(0,length(levels(baidu_time_keywords$日期)))
+
+for(i in 1:nrow(baidu_time_keywords))
+{
+  for(j in 1:length(levels(baidu_time_keywords$日期)))
+  {
+    if(baidu_time_keywords$日期[i]==levels(baidu_time_keywords$日期)[j])
+    {
+      ans[j]=ans[j]+baidu_time_keywords$消费[i]
+    }
+  }
+}
+```
+
+```{r}
+df<-data.frame(ans,levels(baidu_time_keywords$日期))
+df_sort<-df
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+par(family="STKaiti")
+barplot(df_sort$ans,family="STKaiti",horiz=TRUE,xlim=c(-100,310),col = col)
+title(main=list("推广单元各模块消费比例",cex=2),sub="时间:2021.11.08-2021.11.21", ylab="日期",xlab="数量")
+text(y=seq(from=1,length.out=14,by=1.19),x=-50,label=df_sort$levels.baidu_time_keywords.日期.,family="STKaiti",cex=1)
+#legend("topright",legend=levels(baidu_time_keywords$日期),cex = 0.5,col=rev(col),ncol=2,pch = 15)
+text(labels= paste(round(10000*df_sort$ans/sum(df_sort$ans))/100,"%",sep=""),cex=0.7,
+      y=seq(from=1,length.out=14,by=1.19),
+      x=df_sort$ans+15)
+library(ggplot2)
+df_sort$levels.baidu_time_keywords.日期.<-as.factor(df_sort$levels.baidu_time_keywords.日期.)
+df_sort$levels.baidu_time_keywords.日期.<-as.numeric(df_sort$levels.baidu_time_keywords.日期.)
+par(family='STKaiti')
+ggplot(df_sort,aes(x=levels.baidu_time_keywords.日期.,y=ans))+geom_line(size=0.8,color=15)+geom_point(size=1.5,color="red",shape=4)+geom_text(aes(label = ans, vjust = 1.1, hjust = -0.5, angle = 20), show.legend = FALSE)+xlab("日期")+ylab("消费")+ggtitle("推广消费")+theme(axis.title = element_text(family='STKaiti'),title = element_text(family='STKaiti'))
+sum1=0
+sum2=0
+for(i in 1:nrow(df_sort))
+{
+  if (i==6 || i==7 || i==13|| i==14)
+  {
+    sum2=sum2+df_sort$ans[i]
+  }
+  else
+  {
+    sum1=sum1+df_sort$ans[i]
+  }
+}
+# 数据准备
+info = c(sum1,sum2)
+
+# 命名
+names = c("工作日合计","休息日合计")
+
+# 涂色（可选）
+cols = c("#ED1C24","#22B14C","#FFC90E","#3f48CC")
+# 计算百分比
+piepercent = paste(round(100*info/sum(info)), "%")
+# 绘图
+par(family="STKaiti")
+pie(info, labels=piepercent, main = "不同推广单元的消费数分布", col=cols, family='STKaiti')
+# 添加颜色样本标注
+legend("topright", names, cex=0.8, fill=cols)
+```

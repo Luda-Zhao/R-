@@ -1,0 +1,25 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+baidu_1122_1205=read.csv("new_word_report_20211122-20211205_32726191_832894.csv")
+baidu_1108_1121=read.csv("new_word_report_20211108-20211121_32726191_457485.csv")
+```
+
+```{r}
+x=rep(c("11.08-11.21","11.22-12.05"),each=3)
+y=rep(c("展示","点击","消费"),times=2)
+z=c(sum(baidu_1108_1121$展现),sum(baidu_1108_1121$点击),sum(baidu_1108_1121$消费),sum(baidu_1122_1205$展现),sum(baidu_1122_1205$点击),sum(baidu_1122_1205$消费))
+df<-data.frame(date=x,project=y,number=z)
+
+```
+
+```{r}
+library(dplyr)
+par(family="STKaiti")
+df %>%
+  mutate(month=factor(project,levels = c("展示","点击","消费"))) %>%
+  ggplot(aes(x = factor(date,levels = c("11.08-11.21","11.22-12.05")), y = number, fill = project)) + geom_bar(stat = 'identity', position = 'dodge',width = 0.8)+geom_text(aes(label = number,color=project),position=position_dodge(width = 0.8),size = 3,vjust = -0.25)+labs(x="项目类型",y="数量",title = "11.08-12.05两周数据对比")+theme_grey(base_family = "STKaiti")
+```
+

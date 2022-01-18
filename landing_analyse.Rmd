@@ -1,0 +1,482 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+landing=read.csv("7-11月月报 - landing总量.csv")
+landing_client=read.csv("7-11月月报 - 客户生命周期.csv")
+```
+
+```{r}
+str(landing)
+```
+```{r}
+#landing<-na.omit(landing)
+#landing$星期<-as.factor(landing$星期)
+#landing$开始日期<-as.factor(landing$开始日期)
+#landing$状态<-as.factor(landing$状态)
+#landing$负责人<-as.factor(landing$负责人)
+#landing$是否工作时段<-as.factor(landing$是否工作时段)
+#landing$地址.IP所在地.<-as.factor(landing$地址.IP所在地.)
+#landing$PC.移动<as.factor(landing$PC.移动)
+
+```
+```{r}
+landing$星期.<-as.factor(landing$星期)
+str(landing$星期)
+levels(landing$星期)
+```
+
+```{r}
+week=c("Monday ","Tuesday ","Wednesday ","Thursday ","Friday ","Saturday ","Sunday ")
+ans=rep(0,7)
+for(i in 1:nrow(landing))
+{
+  if (landing$开始日期[i]>="2021-07-01"&&landing$开始日期[i]<="2021-11-31")
+  {
+    for (j in 1:length(week))
+    {
+      if(landing$星期[i]==week[j])
+      {
+        ans[j]=ans[j]+1
+      }
+    }
+  }
+}
+ans_7=rep(0,7)
+for(i in 1:nrow(landing))
+{
+  if (landing$开始日期[i]>="2021-07-01"&&landing$开始日期[i]<="2021-07-31")
+  {
+    for (j in 1:length(week))
+    {
+      if(landing$星期[i]==week[j])
+      {
+        ans_7[j]=ans_7[j]+1
+      }
+    }
+  }
+}
+ans_8=rep(0,7)
+for(i in 1:nrow(landing))
+{
+  if (landing$开始日期[i]>="2021-08-01"&&landing$开始日期[i]<="2021-08-31")
+  {
+    for (j in 1:length(week))
+    {
+      if(landing$星期[i]==week[j])
+      {
+        ans_8[j]=ans_8[j]+1
+      }
+    }
+  }
+}
+ans_9=rep(0,7)
+for(i in 1:nrow(landing))
+{
+  if (landing$开始日期[i]>="2021-09-01"&&landing$开始日期[i]<="2021-09-30")
+  {
+    for (j in 1:length(week))
+    {
+      if(landing$星期[i]==week[j])
+      {
+        ans_9[j]=ans_9[j]+1
+      }
+    }
+  }
+}
+ans_10=rep(0,7)
+for(i in 1:nrow(landing))
+{
+  if (landing$开始日期[i]>="2021-10-01"&&landing$开始日期[i]<="2021-10-31")
+  {
+    for (j in 1:length(week))
+    {
+      if(landing$星期[i]==week[j])
+      {
+        ans_10[j]=ans_10[j]+1
+      }
+    }
+  }
+}
+ans_11=rep(0,7)
+for(i in 1:nrow(landing))
+{
+  if (landing$开始日期[i]>="2021-11-01"&&landing$开始日期[i]<="2021-11-30")
+  {
+    for (j in 1:length(week))
+    {
+      if(landing$星期[i]==week[j])
+      {
+        ans_11[j]=ans_11[j]+1
+      }
+    }
+  }
+}
+```
+```{r}
+week=c("星期一 ","星期二 ","星期三 ","星期四 ","星期五 ","星期六 ","星期日 ")
+```
+
+```{r}
+df<-data.frame(week,ans_7,ans_8,ans_9,ans_10,ans_11,ans)
+#df<-data.frame(week,ans)
+x=rep(week,each=5)
+y=rep(c("七月","八月","九月","十月","十一月"),times=7)
+#y=rep(c(7,8,9,10,11))
+z=c()
+for (i in 1:7)
+{
+  for(j in 2:6)
+  z=c(z,df[i,j])
+}
+```
+
+```{r}
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+df_sort=df
+par(family="STKaiti")
+barplot(df_sort$ans,family="STKaiti",horiz=TRUE,xlim=c(-100,200),col = col)
+title(main=list("工作日分布",cex=2),sub="时间:2021.07.01-2021.11.30", ylab="日期",xlab="数量")
+text(y=seq(from=1,length.out=33,by=1.19),x=-50,label=df_sort$week,family="STKaiti",cex=1)
+#legend("topright",legend=levels(baidu_time_keywords$日期),cex = 0.5,col=rev(col),ncol=2,pch = 15)
+text(labels= paste(round(10000*df_sort$ans/sum(df_sort$ans))/100,"%",sep=""),cex=0.7,
+      y=seq(from=1,length.out=33,by=1.19),
+      x=df_sort$ans+15)
+
+```
+```{r}
+library(ggplot2)
+par(family="STKaiti")
+df <- data.frame(week = x, month = y, number = z)
+ggplot(data = df, mapping = aes(x = factor(week,levels = c("星期一 ","星期二 ","星期三 ","星期四 ","星期五 ","星期六 ","星期日 ")), y = number, fill = month)) + geom_bar(stat = 'identity', position = 'dodge',width = 0.8)+geom_text(aes(label = number,color=month),position=position_dodge(width = 0.9),size = 3,vjust = -0.25)+labs(x="日期",y="数量",title = "7月-11月landing总数分布")+theme(axis.title = element_text(family='STKaiti'),title = element_text(family='STKaiti'),legend.title = element_text(family = "STKaiti"))+theme_grey(base_family = "STKaiti")
+```
+```{r}
+library(dplyr)
+df %>%
+  mutate(month=factor(month,levels = c("七月","八月","九月","十月","十一月"))) %>%
+  ggplot(aes(x = factor(week,levels = c("星期一 ","星期二 ","星期三 ","星期四 ","星期五 ","星期六 ","星期日 ")), y = number, fill = month)) + geom_bar(stat = 'identity', position = 'dodge',width = 0.8)+geom_text(aes(label = number,color=month),position=position_dodge(width = 0.9),size = 3,vjust = -0.25)+labs(x="日期",y="数量",title = "7月-11月landing总数分布")+theme(axis.title = element_text(family='STKaiti'),title = element_text(family='STKaiti'),legend.title = element_text(family = "STKaiti"))+theme_grey(base_family = "STKaiti")
+```
+```{r}
+df<-data.frame(week,ans_7,ans_8,ans_9,ans_10,ans_11,ans)
+```
+
+```{r}
+sum_7=rep(0,2)
+sum_8=rep(0,2)
+sum_9=rep(0,2)
+sum_10=rep(0,2)
+sum_11=rep(0,2)
+```
+```{r}
+for(i in 1:nrow(df))
+{
+  if(i<=5)
+  {
+    sum_7[1]=sum_7[1]+df[i,2]
+    sum_8[1]=sum_8[1]+df[i,3]
+    sum_9[1]=sum_9[1]+df[i,4]
+    sum_10[1]=sum_10[1]+df[i,5]
+    sum_11[1]=sum_11[1]+df[i,6]
+  }
+  else
+  {
+    sum_7[2]=sum_7[2]+df[i,2]
+    sum_8[2]=sum_8[2]+df[i,3]
+    sum_9[2]=sum_9[2]+df[i,4]
+    sum_10[2]=sum_10[2]+df[i,5]
+    sum_11[2]=sum_11[2]+df[i,6]
+  }
+    
+  
+}
+work_time=c("是","否")
+df_sum<-data.frame(work_time,sum_7,sum_8,sum_9,sum_10,sum_11)
+```
+
+```{r}
+x=rep(c("是","否"),each=5)
+y=rep(c("七月","八月","九月","十月","十一月"),times=2)
+z=c()
+for(i in 1:2)
+{
+  for(j in 2:6)
+  {
+    z=c(z,df_sum[i,j])
+  }
+}
+df <- data.frame(working_time = x, month = y, number = z)
+```
+
+```{r}
+library(dplyr)
+df %>%
+  mutate(month=factor(month,levels = c("七月","八月","九月","十月","十一月"))) %>%
+  ggplot(aes(x = factor(working_time,levels = c("是","否")), y = number, fill = month)) + geom_bar(stat = 'identity', position = 'dodge',width = 0.8)+geom_text(aes(label = number,color=month),position=position_dodge(width = 0.9),size = 3,vjust = -0.25)+labs(x="是否工作日",y="数量",title = "7月-11月landing工作日/非工作日分布")+theme(axis.title = element_text(family='STKaiti'),title = element_text(family='STKaiti'),legend.title = element_text(family = "STKaiti"))+theme_grey(base_family = "STKaiti")
+
+```
+```{r}
+library(dplyr)
+df %>%
+  mutate(month=factor(month,levels = c("七月","八月","九月","十月","十一月"))) %>%
+  ggplot(aes(x = month, y = number, fill = factor(working_time,levels = c("是","否")))) + geom_bar(stat = 'identity', position = 'fill',width = 0.8)+labs(x="月份",y="比例",title = "7月-11月landing工作日/非工作日分布")+theme(axis.title = element_text(family='STKaiti'),title = element_text(family='STKaiti'),legend.title = element_text(family = "STKaiti"))+theme_grey(base_family = "STKaiti")
+```
+```{r}
+str(landing_client)
+```
+```{r}
+landing_client$公司属性<-as.factor(landing_client$公司属性)
+landing_client$第一需求<-as.factor(landing_client$第一需求)
+```
+```{r}
+library(RColorBrewer)
+col<-c(brewer.pal(9, "YlOrRd")[1:9],brewer.pal(9, "Blues")[1:9])
+par(family="STKaiti")
+barplot(table(landing_client$公司属性),col = col)
+title(main=list("公司类型分布",cex=2),sub="时间:2021.07.01-2021.11.30", ylab="数量",xlab="类型")
+text(labels= table(landing_client$公司属性)[1],cex=0.7,
+      y=seq(from=1,length.out=33,by=1.19),
+      x=df_sort$ans+15)
+```
+
+```{r}
+ans_plat=rep(0,length(levels(landing_client$第一需求)))
+ans_hunt=rep(0,length(levels(landing_client$第一需求)))
+ans_company=rep(0,length(levels(landing_client$第一需求)))
+for(i in 1:nrow(landing_client))
+{
+  if(landing_client$公司属性[i]=="猎头")
+  {
+    for(j in 1:length(levels(landing_client$第一需求)))
+    {
+      if(landing_client$第一需求[i]==levels(landing_client$第一需求)[j])
+      {
+        ans_hunt[j]=ans_hunt[j]+1
+      }
+    }
+  }
+  if(landing_client$公司属性[i]=="平台")
+  {
+    for(j in 1:length(levels(landing_client$第一需求)))
+    {
+      if(landing_client$第一需求[i]==levels(landing_client$第一需求)[j])
+      {
+        ans_plat[j]=ans_plat[j]+1
+      }
+    }
+  }
+  if(landing_client$公司属性[i]=="企业")
+  {
+    for(j in 1:length(levels(landing_client$第一需求)))
+    {
+      if(landing_client$第一需求[i]==levels(landing_client$第一需求)[j])
+      {
+        ans_company[j]=ans_company[j]+1
+      }
+    }
+  }
+}
+
+```
+
+```{r}
+label<-c("空","简历解析","见备注","人才库","人岗匹配","胜任力分析","未获取","问答机器人","无效","知识图谱")
+prope<-c("猎头","平台","企业")
+x=rep(prope,each=10)
+y=rep(label,times=3)
+z=c(ans_hunt,ans_plat,ans_company)
+
+df <- data.frame(company = x, func = y, number = z)
+```
+```{r}
+library(dplyr)
+par(family="STKaiti")
+df %>%
+  mutate(month=factor(func,levels = c("空","简历解析","见备注","人才库","人岗匹配","胜任力分析","未获取","问答机器人","无效","知识图谱"))) %>%
+  ggplot(aes(x = factor(company,levels = c("猎头","平台","企业")), y = number, fill = func)) + geom_bar(stat = 'identity', position = 'dodge',width = 0.8)+geom_text(aes(label = number,color=func),position=position_dodge(width = 0.8),size = 3,vjust = -0.25)+labs(x="公司类型",y="数量",title = "7月-11月landing公司类型分布")+theme_grey(base_family = "STKaiti")
+```
+```{r}
+library(dplyr)
+par(family="STKaiti")
+df %>%
+  mutate(month=factor(func,levels = c("空","简历解析","见备注","人才库","人岗匹配","胜任力分析","未获取","问答机器人","无效","知识图谱"))) %>%
+  ggplot(aes(x = factor(company,levels = c("猎头","平台","企业")), y = number, fill = func)) + geom_bar(stat = 'identity', position = 'fill',width = 0.8)+labs(x="公司类型",y="数量",title = "7月-11月landing公司类型分布")+theme_grey(base_family = "STKaiti")
+```
+```{r}
+str(landing)
+```
+
+```{r}
+baidu=read.csv("danyuan_20210701-20211130_32726191_273549.csv")
+```
+
+```{r}
+str(baidu)
+```
+
+```{r}
+baidu_keywords<-data.frame(baidu$日期,baidu$展现,baidu$点击,baidu$点击率)
+```
+```{r}
+date<-seq(from=as.Date("2021-07-01"), to=as.Date("2021-12-01"), by="day")
+```
+
+```{r}
+ans_date<-rep(0,length(date))
+for(i in 1:nrow(baidu_keywords))
+{
+  for(j in 1:length(date))
+  {
+    if(baidu_keywords$baidu.日期[i]==date[j])   
+    {
+      ans_date[j]=ans_date[j]+baidu_keywords$baidu.点击[i]
+    }
+  }
+}
+
+```
+
+```{r}
+df_date_show<-data.frame(ans_date,date)
+#df_date_show$levels.baidu.日期.<-as.factor(df_date_show$levels.baidu.日期.)
+#df_date_show$levels.baidu.日期.<-as.numeric(df_date_show$levels.baidu.日期.)
+```
+
+
+```{r}
+library(ggplot2)
+par(family='STKaiti')
+ggplot(df_date_show,aes(x=date, y=ans_date))+geom_line(size=0.8,color=15)+geom_point(size=1.5,color="red",shape=4)+xlab("日期/天")+ylab("点击")+ggtitle("推广点击")+theme(axis.title = element_text(family='STKaiti'),title = element_text(family='STKaiti'))
+```
+```{r}
+aifanfan<-read.csv("7-11月月报 - 爱番番landing.csv",header = TRUE)
+```
+
+```{r}
+
+ans_date_landing<-rep(0,length(date))
+for(i in 1:nrow(landing))
+{
+  if (landing$开始日期[i]>="2021-07-01 "&&landing$开始日期[i]<="2021-11-31 ")
+  {
+    for (j in 1:length(date))
+    {
+      if(landing$开始日期[i]==paste(date[j],""))
+      {
+        ans_date_landing[j]=ans_date_landing[j]+1
+      }
+    }
+  }
+}
+```
+```{r}
+for(i in 1:nrow(aifanfan))
+{
+  if (aifanfan$landing日期[i]>="2021-07-01 "&&aifanfan$landing日期[i]<="2021-11-31 ")
+  {
+    for (j in 1:length(date))
+    {
+      if(aifanfan$landing日期[i]==date[j])
+      {
+        ans_date_landing[j]=ans_date_landing[j]+1
+      }
+    }
+  }
+}
+```
+
+```{r}
+df_date_show_print<-data.frame(date,ans_date,ans_date_landing)
+```
+
+```{r}
+ggplot(df_date_show_print, aes(x = date))+
+  geom_line(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_line(aes(y = ans_date/20, color = "百度搜索/20"))+
+  geom_point(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_point(aes(y = ans_date/20, color = "百度搜索/20"))+
+  #~.*20表示次轴与主轴的关系是次轴=主轴乘以20
+  #name表示次y轴的名称
+  scale_y_continuous(sec.axis = sec_axis(~.*20, name = "百度搜索/20"))+
+  scale_color_manual(values = c("red","blue"))+
+  labs(x="日期",y="landing数量",title = "baidu点击次数与landing关系")+theme_grey(base_family = "STKaiti")
+```
+```{r}
+cor(df_date_show_print$ans_date_landing,df_date_show_print$ans_date)
+```
+百度点击量和landing数量有正弱相关
+```{r}
+df_date_show_print_7<-subset(df_date_show_print,date>="2021-07-01" & date<="2021-07-31")
+df_date_show_print_8<-subset(df_date_show_print,date>="2021-08-01" & date<="2021-08-31")
+df_date_show_print_9<-subset(df_date_show_print,date>="2021-09-01" & date<="2021-10-01")
+df_date_show_print_10<-subset(df_date_show_print,date>="2021-10-01" & date<="2021-10-31")
+df_date_show_print_11<-subset(df_date_show_print,date>="2021-11-01")
+```
+```{r}
+ggplot(df_date_show_print_7, aes(x = date))+
+  geom_line(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_line(aes(y = ans_date/20, color = "百度搜索/20"))+
+  geom_point(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_point(aes(y = ans_date/20, color = "百度搜索/20"))+
+  #~.*20表示次轴与主轴的关系是次轴=主轴乘以20
+  #name表示次y轴的名称
+  scale_y_continuous(sec.axis = sec_axis(~.*20, name = "百度搜索/20"))+
+  scale_color_manual(values = c("red","blue"))+
+  labs(x="日期",y="landing数量",title = "baidu点击次数与landing关系")+theme_grey(base_family = "STKaiti")
+cor(df_date_show_print_7$ans_date_landing,df_date_show_print_7$ans_date)
+```
+```{r}
+ggplot(df_date_show_print_8, aes(x = date))+
+  geom_line(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_line(aes(y = ans_date/20, color = "百度搜索/20"))+
+  geom_point(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_point(aes(y = ans_date/20, color = "百度搜索/20"))+
+  #~.*20表示次轴与主轴的关系是次轴=主轴乘以20
+  #name表示次y轴的名称
+  scale_y_continuous(sec.axis = sec_axis(~.*20, name = "百度搜索/20"))+
+  scale_color_manual(values = c("red","blue"))+
+  labs(x="日期",y="landing数量",title = "baidu点击次数与landing关系")+theme_grey(base_family = "STKaiti")
+cor(df_date_show_print_8$ans_date_landing,df_date_show_print_8$ans_date)
+```
+```{r}
+ggplot(df_date_show_print_9, aes(x = date))+
+  geom_line(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_line(aes(y = ans_date/20, color = "百度搜索/20"))+
+  geom_point(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_point(aes(y = ans_date/20, color = "百度搜索/20"))+
+  #~.*20表示次轴与主轴的关系是次轴=主轴乘以20
+  #name表示次y轴的名称
+  scale_y_continuous(sec.axis = sec_axis(~.*20, name = "百度搜索/20"))+
+  scale_color_manual(values = c("red","blue"))+
+  labs(x="日期",y="landing数量",title = "baidu点击次数与landing关系")+theme_grey(base_family = "STKaiti")
+cor(df_date_show_print_9$ans_date_landing,df_date_show_print_9$ans_date)
+```
+```{r}
+ggplot(df_date_show_print_10, aes(x = date))+
+  geom_line(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_line(aes(y = ans_date/20, color = "百度搜索/20"))+
+  geom_point(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_point(aes(y = ans_date/20, color = "百度搜索/20"))+
+  #~.*20表示次轴与主轴的关系是次轴=主轴乘以20
+  #name表示次y轴的名称
+  scale_y_continuous(sec.axis = sec_axis(~.*20, name = "百度搜索/20"))+
+  scale_color_manual(values = c("red","blue"))+
+  labs(x="日期",y="landing数量",title = "baidu点击次数与landing关系")+theme_grey(base_family = "STKaiti")
+cor(df_date_show_print_10$ans_date_landing,df_date_show_print_11$ans_date)
+```
+```{r}
+ggplot(df_date_show_print_11, aes(x = date))+
+  geom_line(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_line(aes(y = ans_date/20, color = "百度搜索/20"))+
+  geom_point(aes(y = ans_date_landing, color = "landing数量"))+
+  geom_point(aes(y = ans_date/20, color = "百度搜索/20"))+
+  #~.*20表示次轴与主轴的关系是次轴=主轴乘以20
+  #name表示次y轴的名称
+  scale_y_continuous(sec.axis = sec_axis(~.*20, name = "百度搜索/20"))+
+  scale_color_manual(values = c("red","blue"))+
+  labs(x="日期",y="landing数量",title = "baidu点击次数与landing关系")+theme_grey(base_family = "STKaiti")
+cor(df_date_show_print_11$ans_date_landing,df_date_show_print_11$ans_date)
+```
+
